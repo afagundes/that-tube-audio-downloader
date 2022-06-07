@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+
+@layer base {
+    html {
+        font-family: 'Share Tech Mono', monospace;
+        @apply text-lg;
+    }
+
+    body {
+        @apply text-slate-100;        
+    }
+}
+
+@tailwind components;
+@tailwind utilities;
