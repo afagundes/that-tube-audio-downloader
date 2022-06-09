@@ -1,16 +1,23 @@
-const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
 const stream = require('youtube-audio-stream');
 
-const hostname = '127.0.0.1';
-const port = 8080;
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-const server = http.createServer(async (req, res) => {
+app.get('/download', async (req, res) => {
+    const { videoUrl } = req.query;
+
     try {
         res.statusCode = 200;
+        res.setHeader('Content-Disposition', 'attachment; filename=audio.mp3');
         res.setHeader('Content-Type', 'audio/mpeg');
-        for await (const chunk of stream(`https://www.youtube.com/watch?v=_5gyvZHwXSo`)) {
+        
+        for await (const chunk of stream(videoUrl)) {
             res.write(chunk);
         }
+        
         res.end();
     }
     catch (err) {
@@ -23,6 +30,5 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+const PORT = 8080;
+app.listen(PORT, () => console.log(`Server listening at ${PORT}`))
