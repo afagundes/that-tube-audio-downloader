@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading, setPlaying, setSourceUrl, setAudioUrl } from "./audio-player/audioSlice";
 import Button from "./Button";
 
 const Form = () => {
     const formAction = "http://localhost:8080/download";
 
+    const dispatch = useDispatch();
+    const loading = useSelector((state) => state.audio.loading);
+    const playing = useSelector((state) => state.audio.playing);
+    const audioReady = useSelector((state) => state.audio.audioReady);
+
     const [videoUrl, setVideoUrl] = useState('');
-    const [playing, setPlaying] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [invalid, setInvalid] = useState(false);
-    const [audio, setAudio] = useState(null);
 
     const prepareVideoUrl = () => {
         const youTubePattern = /^(http(s)?:\/\/)?(www\.)?(youtube.com\/(watch\?v=(.+)|shorts\/(.+)))/;
@@ -33,10 +37,8 @@ const Form = () => {
     }
 
     const playAudio = () => {
-        if (!playing && audio) {
-            audio.play();
-            setPlaying(true);
-
+        if (!playing && audioReady) {
+            dispatch(setPlaying(true));
             return;
         }
 
@@ -47,30 +49,15 @@ const Form = () => {
         }
 
         const audioUrl = `${formAction}?videoUrl=${videoUrl}`;
-        const audioObj = new Audio(audioUrl);
-
-        setLoading(true);
-        setPlaying(false);
+        
         setInvalid(false);
-
-        audioObj.addEventListener("canplaythrough", _ => {
-            audioObj.play();
-            setPlaying(true);
-            setLoading(false);
-        });
-
-        audioObj.addEventListener("ended", _ => {
-            setAudio(null);
-            setPlaying(false);
-            setLoading(false);
-        });
-
-        setAudio(audioObj);
+        dispatch(setLoading(true));
+        dispatch(setSourceUrl(videoUrl));
+        dispatch(setAudioUrl(audioUrl));
     }
 
     const pauseAudio = () => {
-        audio.pause();
-        setPlaying(false);
+        dispatch(setPlaying(false));
     }
 
     return (
@@ -94,12 +81,12 @@ const Form = () => {
             )}
 
             <div className="flex flex-row items-center justify-center mt-6">
-                <Button text="Download" isSubmit='true' />
                 {
                     playing
-                        ? <Button text="Pause" action={pauseAudio} active={playing} />
-                        : <Button text="Play" action={playAudio} showLoading={loading} active={!loading && audio != null} />
+                    ? <Button text="Pause" action={pauseAudio} active={playing} />
+                    : <Button text="Play" action={playAudio} showLoading={loading} active={!loading && audioReady} />
                 }
+                <Button text="Download" isSubmit='true' />
             </div>
         </form>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import BottomBar from './components/BottomBar';
+import AudioPlayer from './components/audio-player/AudioPlayer';
 import Form from './components/Form';
 import Header from './components/Header';
 import Layout from './components/Layout';
@@ -11,7 +11,7 @@ function App() {
         <Header />
         <Form />
       </Layout>
-      <BottomBar />
+      <AudioPlayer />
     </>
   );
 }
