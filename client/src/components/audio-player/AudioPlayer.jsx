@@ -53,7 +53,6 @@ const AudioPlayer = () => {
             setAudioTitle(videoData.title);
         }
 
-
         setupAudio();
         fetchAudioData();
 
