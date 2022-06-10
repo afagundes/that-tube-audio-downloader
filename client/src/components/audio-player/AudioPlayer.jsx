@@ -48,12 +48,31 @@ const AudioPlayer = () => {
 
     }, [playing]);
 
+    useEffect(() => {
+        const setCurrentTime = () => {
+            return setInterval(() => {
+                if (!audio || !playing || audio.currentTime < 1) return;
+
+                const seconds =  parseInt(audio.currentTime % 60).toString().padStart(2, '0');
+                const minutes = parseInt(audio.currentTime / 60).toString().padStart(2, '0');
+                const hours = parseInt(audio.currentTime / 60 / 60).toString().padStart(2, '0');
+
+                setAudioTime(`${hours}:${minutes}:${seconds}`);
+            }, 500);
+        }
+
+        const currentTimeHandler = setCurrentTime();
+
+        return () => clearInterval(currentTimeHandler);
+    }, [audio]);
+
     if (!audio) return null;
 
     return (
         <div className='bg-neutral-700 w-full h-7 p-2 text-sm fixed bottom-0 left-0 flex flex-row items-center'>
             <span className='text-red-500 pr-2'>Now Playing:</span>
-            Ciência Todo Dia | {audioTime} | {playing ? "Playing" : "Paused"} | <span className="cursor-pointer" onClick={() => stop(audio)}>Stop</span>
+            Ciência Todo Dia | {audioTime} | {playing ? "Playing" : "Paused"} | 
+            <span className="cursor-pointer" onClick={() => stop(audio)}>Stop</span>
         </div>
     );
 }
