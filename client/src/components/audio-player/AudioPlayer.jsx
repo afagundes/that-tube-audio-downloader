@@ -4,6 +4,8 @@ import AudioPlayerButton from "./AudioPlayerButton";
 import { setAudioReady, setLoading, setPlaying } from "./audioSlice";
 
 const AudioPlayer = () => {
+    const videoDataApi = 'http://localhost:8080/fetch-data';
+
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.audio.loading);
     const audioReady = useSelector((state) => state.audio.audioReady);
@@ -13,6 +15,7 @@ const AudioPlayer = () => {
 
     const [audioTime, setAudioTime] = useState('00:00:00');
     const [audio, setAudio] = useState(null);
+    const [audioTitle, setAudioTitle] = useState('');
 
     const stop = useCallback((audioObj) => {
         audioObj.src = null;
@@ -27,21 +30,34 @@ const AudioPlayer = () => {
     useEffect(() => {
         if (!loading || audioReady) return;
 
-        const audioObj = new Audio(audioUrl);
+        const setupAudio = () => {
+            const audioObj = new Audio(audioUrl);
 
-        audioObj.addEventListener("canplaythrough", _ => {
-            audioObj.play();
+            audioObj.addEventListener("canplaythrough", _ => {
+                audioObj.play();
 
-            setAudio(audioObj);
+                setAudio(audioObj);
 
-            dispatch(setLoading(false));
-            dispatch(setPlaying(true));
-            dispatch(setAudioReady(true));
-        });
+                dispatch(setLoading(false));
+                dispatch(setPlaying(true));
+                dispatch(setAudioReady(true));
+            });
 
-        audioObj.addEventListener("ended", _ => stop(audioObj));
+            audioObj.addEventListener("ended", _ => stop(audioObj));
+        }
+        
+        const fetchAudioData = async () => {
+            const res = await fetch(`${videoDataApi}?videoUrl=${sourceUrl}`);
+            const videoData = await res.json();
 
-    }, [loading, audioReady, audioUrl, dispatch, stop]);
+            setAudioTitle(videoData.title);
+        }
+
+
+        setupAudio();
+        fetchAudioData();
+
+    }, [loading, audioReady, audioUrl, sourceUrl, dispatch, stop]);
 
     // Handles play/pause events
     useEffect(() => {
@@ -78,16 +94,15 @@ const AudioPlayer = () => {
                             flex flex-row items-center justify-between'>
             <div>
                 <span className='text-red-500 pr-2'>Now Playing:</span>
-                Ciência Todo Dia | {audioTime}
-                {/*playing ? "Playing" : "Paused" | <span className="cursor-pointer" onClick={() => stop(audio)}>Stop</span> */}
+                {audioTitle} | {audioTime}
             </div>
 
             <div className="flex">
-                <AudioPlayerButton 
+                <AudioPlayerButton
                     type={playing ? "pause" : "play"}
                     action={() => dispatch(setPlaying(!playing))}
-                /> 
-                | 
+                />
+                |
                 <AudioPlayerButton type="stop" action={() => stop(audio)} />
             </div>
         </div>

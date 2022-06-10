@@ -17,8 +17,10 @@ const AudioPlayerButton = ({ type, action }) => {
             case "stop":
                 setButton(<ImStop2 className={buttonStyle} size={buttonSize} />);
                 break;
+            default:
+                setButton(null);
         }
-    });
+    }, [type]);
 
     return (
         <button type="button" className="mx-1" onClick={action}>
