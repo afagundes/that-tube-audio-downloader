@@ -13,12 +13,13 @@ function extractPattern(data, pattern, index) {
 function extractNextVideo(data) {
     const pattern = /"url":"(\/watch\?v=.*?)"/g;
 
-    if (!pattern.test(data)) {
-        return null;
-    }
+    if (!pattern.test(data)) return null;
     
     const matches = data.match(pattern);
-    const randomIndex = Math.round(Math.random() * (matches.length - 1));
+
+    if (matches.length < 10) return null;
+
+    const randomIndex = Math.round(Math.random() * 10);
 
     let nextVideo = matches[randomIndex];
     nextVideo = nextVideo?.replaceAll("\"", "")?.replaceAll("url:", "");

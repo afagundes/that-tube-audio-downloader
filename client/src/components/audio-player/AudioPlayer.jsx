@@ -22,6 +22,7 @@ const AudioPlayer = () => {
         audioObj.src = null;
 
         setAudio(null);
+        setAudioTitle('');
         setAudioTime('00:00:00');
         dispatch(setPlaying(false));
         dispatch(setAudioReady(false));
@@ -35,52 +36,49 @@ const AudioPlayer = () => {
         dispatch(setLoading(true));
         dispatch(setSourceUrl(nextVideo));
         dispatch(setAudioUrl(newAudioUrl));
-    }, [dispatch, nextVideo]);
+    }, [dispatch, stop, nextVideo]);
 
     // Init audio player after loading
     useEffect(() => {
         if (!loading || audioReady) return;
 
         const setupAudio = () => {
+            setAudioTitle("Loading...");
             const audioObj = new Audio(audioUrl);
 
+            const fetchAudioData = async () => {
+                const res = await fetch(`${videoDataApi}?videoUrl=${sourceUrl}`);
+                const videoData = await res.json();
+    
+                setAudioTitle(videoData.title);
+                setNextVideo(videoData.nextVideo);
+            }
+
             audioObj.addEventListener("canplaythrough", _ => {
-                audioObj.play();
-
+                fetchAudioData();
+                
                 setAudio(audioObj);
-
                 dispatch(setLoading(false));
                 dispatch(setPlaying(true));
                 dispatch(setAudioReady(true));
+
+                audioObj.play();
             });
 
             audioObj.addEventListener("ended", _ => nextVideo ? next(audioObj) : stop(audioObj));
         }
         
-        const fetchAudioData = async () => {
-            const res = await fetch(`${videoDataApi}?videoUrl=${sourceUrl}`);
-            const videoData = await res.json();
-
-            setAudioTitle(videoData.title);
-            setNextVideo(videoData.nextVideo);
-        }
-
         setupAudio();
-        fetchAudioData();
 
-    }, [loading, audioReady, audioUrl, sourceUrl, dispatch, stop]);
+    }, [loading, audioReady, audioUrl, sourceUrl, nextVideo, dispatch, stop, next]);
 
-    // Handles play/pause events
+    // Handles play/pause events and sets the timer
     useEffect(() => {
         if (!audio) return;
 
         if (playing) audio.play();
         else audio.pause();
 
-    }, [playing, audio]);
-
-    // Update audio timer
-    useEffect(() => {
         const setCurrentTime = () => {
             return setInterval(() => {
                 if (!audio || !playing || audio.currentTime < 1) return;
@@ -96,7 +94,8 @@ const AudioPlayer = () => {
         const currentTimeHandler = setCurrentTime();
 
         return () => clearInterval(currentTimeHandler);
-    }, [audio, playing]);
+
+    }, [playing, audio]);
 
     if (!audio) return null;
 
