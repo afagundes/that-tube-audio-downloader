@@ -25,7 +25,7 @@ const Form = () => {
 
     const downloadAudio = (event) => {
         const url = prepareVideoUrl();
-        
+
         if (!url) {
             setInvalid(true);
             event.preventDefault();
@@ -34,6 +34,7 @@ const Form = () => {
         }
 
         setInvalid(false);
+        dispatch(setSourceUrl(url));
     }
 
     const playAudio = () => {
@@ -86,7 +87,7 @@ const Form = () => {
                     ? <Button text="Pause" action={pauseAudio} active={playing} />
                     : <Button text="Play" action={playAudio} showLoading={loading} active={!loading && audioReady} />
                 }
-                <Button text="Download" isSubmit='true' />
+                <Button text="Download" isSubmit='true' disabled={audioReady} />
             </div>
         </form>
     );
