@@ -10,13 +10,13 @@ const Form = () => {
     const loading = useSelector((state) => state.audio.loading);
     const playing = useSelector((state) => state.audio.playing);
     const audioReady = useSelector((state) => state.audio.audioReady);
+    const sourceUrl = useSelector((state) => state.audio.sourceUrl);
 
-    const [videoUrl, setVideoUrl] = useState('');
     const [invalid, setInvalid] = useState(false);
 
     const prepareVideoUrl = () => {
         const youTubePattern = /^(http(s)?:\/\/)?(www\.)?(youtube.com\/(watch\?v=(.+)|shorts\/(.+)))/;
-        const matches = videoUrl.match(youTubePattern);
+        const matches = sourceUrl.match(youTubePattern);
 
         if (matches) return `https://www.${matches[4]}`;
         return null;
@@ -32,7 +32,6 @@ const Form = () => {
             return;
         }
 
-        setVideoUrl(url);
         setInvalid(false);
     }
 
@@ -48,11 +47,10 @@ const Form = () => {
             return;
         }
 
-        const audioUrl = `${formAction}?videoUrl=${videoUrl}`;
+        const audioUrl = `${formAction}?videoUrl=${sourceUrl}`;
         
         setInvalid(false);
         dispatch(setLoading(true));
-        dispatch(setSourceUrl(videoUrl));
         dispatch(setAudioUrl(audioUrl));
     }
 
@@ -67,10 +65,11 @@ const Form = () => {
         >
             <input type="text"
                 name="videoUrl"
-                className="w-full text-zinc-800 bg-slate-100 p-2 rounded-md"
+                className={`w-full text-zinc-800 p-2 rounded-md ${audioReady ? "bg-neutral-300" : "bg-slate-100"}`}
                 placeholder="https://www.youtube.com/watch?v=BPVu5xaZk-4"
-                onChange={(event) => setVideoUrl(event.target.value)}
-                value={videoUrl}
+                onChange={(event) => dispatch(setSourceUrl(event.target.value))}
+                value={sourceUrl}
+                disabled={audioReady}
                 autoFocus
             />
 
