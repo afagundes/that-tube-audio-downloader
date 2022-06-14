@@ -26,3 +26,17 @@ npm start
 
 ## Technologies
 
+The server uses the following packages:
+
+- Node
+- Express
+- Html-Entities
+- Node-Fetch
+- Youtube-Audio-Stream
+
+The client uses the following packages:
+
+- React
+- React-Redux
+- React-Icons
+- Tailwind CSS
