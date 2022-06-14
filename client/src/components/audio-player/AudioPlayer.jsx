@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { config } from "../../app/constants";
 import AudioPlayerButton from "./AudioPlayerButton";
 import { setAudioReady, setAudioUrl, setLoading, setPlaying, setSourceUrl } from "./audioSlice";
 
 const AudioPlayer = () => {
-    const videoDataApi = 'http://localhost:8080/fetch-data';
-
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.audio.loading);
     const audioReady = useSelector((state) => state.audio.audioReady);
@@ -29,8 +28,8 @@ const AudioPlayer = () => {
     }, [dispatch]);
 
     const next = useCallback((audioObj) => {
-        const apiUrl = "http://localhost:8080/download";
-        const newAudioUrl = `${apiUrl}?videoUrl=${nextVideo}`;
+        const videoStreamApi = `${config.url.STREAM_API}/download`;
+        const newAudioUrl = `${videoStreamApi}?videoUrl=${nextVideo}`;
 
         stop(audioObj);
         dispatch(setLoading(true));
@@ -47,6 +46,7 @@ const AudioPlayer = () => {
             const audioObj = new Audio(audioUrl);
 
             const fetchAudioData = async () => {
+                const videoDataApi = `${config.url.STREAM_API}/fetch-data`;
                 const res = await fetch(`${videoDataApi}?videoUrl=${sourceUrl}`);
                 const videoData = await res.json();
     

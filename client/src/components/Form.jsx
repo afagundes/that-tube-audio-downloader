@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setPlaying, setSourceUrl, setAudioUrl } from "./audio-player/audioSlice";
+import { config } from "../app/constants";
 import Button from "./Button";
 
 const Form = () => {
-    const formAction = "http://localhost:8080/download";
+    const formAction = `${config.url.STREAM_API}/download`;
 
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.audio.loading);
@@ -66,7 +67,7 @@ const Form = () => {
             <input type="text"
                 name="videoUrl"
                 className={`w-full text-zinc-800 p-2 rounded-md ${audioReady ? "bg-neutral-300" : "bg-slate-100"}`}
-                placeholder="https://www.youtube.com/watch?v=BPVu5xaZk-4"
+                placeholder="https://www.youtube.com/watch?v=32XsfeIX_rM"
                 onChange={(event) => dispatch(setSourceUrl(event.target.value))}
                 value={sourceUrl}
                 disabled={audioReady}
