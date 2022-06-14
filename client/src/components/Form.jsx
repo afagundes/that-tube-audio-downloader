@@ -66,7 +66,7 @@ const Form = () => {
         >
             <input type="text"
                 name="videoUrl"
-                className={`w-full text-zinc-800 p-2 rounded-md ${audioReady ? "bg-neutral-300" : "bg-slate-100"}`}
+                className={`w-full text-zinc-800 p-2 rounded-md ${audioReady ? "bg-neutral-300 cursor-not-allowed" : "bg-slate-100"}`}
                 placeholder="https://www.youtube.com/watch?v=32XsfeIX_rM"
                 onChange={(event) => dispatch(setSourceUrl(event.target.value))}
                 value={sourceUrl}

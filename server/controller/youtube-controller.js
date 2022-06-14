@@ -33,7 +33,7 @@ const fetchYoutube = async (req, res) => {
         const youtubeRes = await fetch(videoUrl);
         const html = await youtubeRes.text();
 
-        res.json(parseYoutube(html));
+        res.json(parseYoutube(html, videoUrl));
     }
     catch (err) {
         console.log(err);

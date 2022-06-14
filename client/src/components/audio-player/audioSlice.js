@@ -6,8 +6,8 @@ export const audioSlice = createSlice({
         loading: false,
         playing: false,
         audioReady: false,
-        sourceUrl: null,
-        audioUrl: null
+        sourceUrl: "",
+        audioUrl: ""
     },
     reducers: {
         setLoading: (state, loading) => {
