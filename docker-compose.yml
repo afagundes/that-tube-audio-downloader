@@ -13,5 +13,7 @@ services:
     container_name: youtube-audio-player-client
     build:
       context: ./client
+      args:
+        - REACT_APP_STREAM_API=http://localhost:8080
     ports:
       - '80:80'

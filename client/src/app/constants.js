@@ -6,7 +6,7 @@ const dev = {
 
 const prod = {
     url: {
-        STREAM_API: 'http://localhost:8080'
+        STREAM_API: process.env.REACT_APP_STREAM_API
     }
 }
 

@@ -1,6 +1,8 @@
 # BUILD
 FROM node:17-alpine3.15 as build
 
+ARG REACT_APP_STREAM_API
+
 WORKDIR /app
 COPY package*.json ./
 
