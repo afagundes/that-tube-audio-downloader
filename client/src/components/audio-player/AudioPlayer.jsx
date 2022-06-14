@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AudioPlayerButton from "./AudioPlayerButton";
-import { setAudioReady, setLoading, setPlaying } from "./audioSlice";
+import { setAudioReady, setAudioUrl, setLoading, setPlaying, setSourceUrl } from "./audioSlice";
 
 const AudioPlayer = () => {
     const videoDataApi = 'http://localhost:8080/fetch-data';
@@ -16,6 +16,7 @@ const AudioPlayer = () => {
     const [audioTime, setAudioTime] = useState('00:00:00');
     const [audio, setAudio] = useState(null);
     const [audioTitle, setAudioTitle] = useState('');
+    const [nextVideo, setNextVideo] = useState(null);
 
     const stop = useCallback((audioObj) => {
         audioObj.src = null;
@@ -25,6 +26,16 @@ const AudioPlayer = () => {
         dispatch(setPlaying(false));
         dispatch(setAudioReady(false));
     }, [dispatch]);
+
+    const next = useCallback((audioObj) => {
+        const apiUrl = "http://localhost:8080/download";
+        const newAudioUrl = `${apiUrl}?videoUrl=${nextVideo}`;
+
+        stop(audioObj);
+        dispatch(setLoading(true));
+        dispatch(setSourceUrl(nextVideo));
+        dispatch(setAudioUrl(newAudioUrl));
+    }, [dispatch, nextVideo]);
 
     // Init audio player after loading
     useEffect(() => {
@@ -43,7 +54,7 @@ const AudioPlayer = () => {
                 dispatch(setAudioReady(true));
             });
 
-            audioObj.addEventListener("ended", _ => stop(audioObj));
+            audioObj.addEventListener("ended", _ => nextVideo ? next(audioObj) : stop(audioObj));
         }
         
         const fetchAudioData = async () => {
@@ -51,6 +62,7 @@ const AudioPlayer = () => {
             const videoData = await res.json();
 
             setAudioTitle(videoData.title);
+            setNextVideo(videoData.nextVideo);
         }
 
         setupAudio();
@@ -101,8 +113,8 @@ const AudioPlayer = () => {
                     type={playing ? "pause" : "play"}
                     action={() => dispatch(setPlaying(!playing))}
                 />
-                |
-                <AudioPlayerButton type="stop" action={() => stop(audio)} />
+                { nextVideo && (<>| <AudioPlayerButton type="next" action={() => next(audio)} /></>) }
+                | <AudioPlayerButton type="stop" action={() => stop(audio)} />
             </div>
         </div>
     );

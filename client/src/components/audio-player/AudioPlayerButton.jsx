@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ImPause2, ImStop2, ImPlay3 } from "react-icons/im";
+import { ImPause2, ImStop2, ImPlay3, ImForward3 } from "react-icons/im";
 
 const AudioPlayerButton = ({ type, action }) => {
     const [button, setButton] = useState(null);
@@ -17,6 +17,9 @@ const AudioPlayerButton = ({ type, action }) => {
             case "stop":
                 setButton(<ImStop2 className={buttonStyle} size={buttonSize} />);
                 break;
+            case "next":
+                setButton(<ImForward3 className={buttonStyle} size={buttonSize} />);
+                break;
             default:
                 setButton(null);
         }
@@ -24,7 +27,7 @@ const AudioPlayerButton = ({ type, action }) => {
 
     return (
         <button type="button" className="mx-1" onClick={action}>
-            {button}    
+            {button}
         </button>
     );
 }

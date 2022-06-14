@@ -18,8 +18,9 @@ function extractNextVideo(data) {
     }
     
     const matches = data.match(pattern);
-    
-    let nextVideo = matches[matches.length - 2];
+    const randomIndex = Math.round(Math.random() * (matches.length - 1));
+
+    let nextVideo = matches[randomIndex];
     nextVideo = nextVideo?.replaceAll("\"", "")?.replaceAll("url:", "");
 
     return nextVideo;
@@ -28,7 +29,12 @@ function extractNextVideo(data) {
 function parseYoutube(youtubeHtml) {
     const title = extractPattern(youtubeHtml, titlePattern, 1);
     const description = extractPattern(youtubeHtml, descriptionPattern, 1);
-    const nextVideo = extractNextVideo(youtubeHtml);
+    
+    let nextVideo = extractNextVideo(youtubeHtml);
+
+    if (nextVideo) {
+        nextVideo = `https://www.youtube.com${nextVideo}`;
+    }
 
     return {
         title,
