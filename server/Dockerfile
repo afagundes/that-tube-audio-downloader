@@ -1,6 +1,6 @@
 FROM node:17-alpine3.15
 
-# Lib ffmpeg is required for youtube to audio conversion
+# Lib ffmpeg is required for audio conversion
 RUN apk add ffmpeg
 
 WORKDIR /usr/src/app
