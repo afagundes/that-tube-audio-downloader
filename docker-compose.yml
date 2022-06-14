@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+
+  youtube-audio-player-server:
+    container_name: youtube-audio-player-server
+    build:
+      context: ./server
+    ports:
+      - '8080:8080'
+
+  youtube-audio-player-client:
+    container_name: youtube-audio-player-client
+    build:
+      context: ./client
+    ports:
+      - '80:80'
